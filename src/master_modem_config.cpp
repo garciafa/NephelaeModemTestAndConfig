@@ -30,15 +30,9 @@ std::string sendCommand (asio::serial_port& serialPort ,std::string command)
     bool got_answer = false;
     do
     {
-        auto n = asio::read_until(serialPort, b, endOfLinestring, error);
-        if (error)
-        {
-            std::cerr << error << std::endl;
-            exit(EXIT_FAILURE);
-        }
-
+        auto n = asio::read_until(serialPort, b, endOfLinestring);
         std::istream is(&b);
-        is >> stringBuffer;
+        std::getline(is, stringBuffer);
 
         result += stringBuffer.substr(0, n);
         got_answer = std::regex_match(stringBuffer.substr(0, n), re);
