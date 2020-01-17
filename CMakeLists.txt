@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.00)
 project(NephelaeModemConfig)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -13,7 +13,7 @@ add_executable(NephelaeModemConfig src/modem_config.cpp)
 target_link_libraries(NephelaeModemConfig pthread ${Boost_LIBRARIES})
 
 add_executable(MasterNephelaeModemConfig src/master_modem_config.cpp)
-target_link_libraries(MasterNephelaeModemConfigy pthread ${Boost_LIBRARIES})
+target_link_libraries(MasterNephelaeModemConfig pthread ${Boost_LIBRARIES})
 
 add_executable(ModemThroughputSend src/modem_throughtput_sender.cpp)
 target_link_libraries(ModemThroughputSend pthread ${Boost_LIBRARIES})
