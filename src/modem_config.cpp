@@ -21,7 +21,7 @@ std::string sendCommand (asio::serial_port& serialPort ,std::string command)
 
     static std::string stringBuffer;
     static boost::asio::streambuf b;
-    //boost::asio::streambuf sb;
+
     std::regex re("(?:" + okString + "|" + errorString + ")" + endOfLinestring);
 
     std::string result;
@@ -31,14 +31,12 @@ std::string sendCommand (asio::serial_port& serialPort ,std::string command)
     bool got_answer = false;
     do
     {
-        auto bufs = b.prepare(512);
-        auto n = asio::read_until(serialPort, bufs, endOfLinestring, error);
+        auto n = asio::read_until(serialPort, b, endOfLinestring, error);
         if (error)
         {
             std::cerr << error << std::endl;
             exit(EXIT_FAILURE);
         }
-        b.commit(n);
 
         std::istream is(&b);
         is >> stringBuffer;
