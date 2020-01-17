@@ -20,6 +20,7 @@ std::string sendCommand (asio::serial_port& serialPort ,std::string command)
     serialPort.write_some(asio::buffer(command.c_str(), command.length()));
 
     static std::string stringBuffer;
+    static boost::asio::streambuf b;
     //boost::asio::streambuf sb;
     std::regex re("(?:" + okString + "|" + errorString + ")" + endOfLinestring);
 
@@ -30,12 +31,17 @@ std::string sendCommand (asio::serial_port& serialPort ,std::string command)
     bool got_answer = false;
     do
     {
-        auto n = asio::read_until(serialPort, asio::dynamic_buffer(stringBuffer), endOfLinestring, error);
+        auto bufs = b.prepare(512);
+        auto n = asio::read_until(serialPort, bufs, endOfLinestring, error);
         if (error)
         {
             std::cerr << error << std::endl;
             exit(EXIT_FAILURE);
         }
+        b.commit(n);
+
+        std::istream is(&b);
+        is >> stringBuffer;
 
         result += stringBuffer.substr(0, n);
         got_answer = std::regex_match(stringBuffer.substr(0, n), re);
@@ -77,7 +83,7 @@ int main (int argc, char ** argv)
         }
     }
 
-    asio::io_service ioService;
+    boost::asio::io_service ioService;
     asio::serial_port serialPort(ioService,argv[1]);
     if (!serialPort.is_open())
     {
